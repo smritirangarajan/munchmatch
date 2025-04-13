@@ -1,0 +1,120 @@
+/* .login-container - This will handle the container styling */
+.login-container {
+    height: 77vh; /* Makes the container 70% of the viewport height */
+    width: 25%; /* Sets the width to about one-quarter of the screen */
+    background: #FFF6EC; /* Light background color */
+    border-radius: 50px; /* Rounded corners */
+    display: flex; /* Flexbox for centering */
+    flex-direction: column; /* Align items vertically */
+    justify-content: flex-start; /* Start alignment vertically */
+    align-items: center; /* Center the items horizontally */
+    padding: 5%; /* Padding inside the container */
+    
+    /* New centering properties */
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    
+    /* Optional: Add a subtle shadow for depth */
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+}
+
+.login-header {
+    width: 100%;
+    padding: 10px 0;
+    text-align: center;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: #FF5501;
+    font-size: 4vw;
+    font-family: Arial, sans-serif;
+    font-weight: 900;
+    line-height: 1;
+    text-transform: uppercase;
+  }
+
+  .login-form {
+    width: 120%;
+    max-width: 800px;
+    
+    padding: 2rem;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+  }
+  
+  .form-label {
+    color: black;
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-family: Arial, sans-serif;
+    font-weight: 900;
+    text-align: left;
+    margin-bottom: 0.5rem; /* Brings label closer to input */
+  }
+  
+  .form-input {
+    width: 100%;
+    padding: 1rem;
+    font-size: clamp(1rem, 2vw, 1.25rem);
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    margin-bottom: 2rem;
+  }
+  
+  .form-input:focus {
+    border-color: #FF5501;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 85, 1, 0.2);
+  }
+  
+  .login-button {
+    width: 80%; /* Reduced from 100% to 80% */
+    max-width: 400px; /* Added maximum width */
+    padding: clamp(0.75rem, 2vw, 1.25rem) 0; /* Reduced padding */
+    background: radial-gradient(ellipse at center, #FF7F36 19%, #FF5501 100%);
+    border: none;
+    border-radius: 60px;
+    color: white;
+    font-size: clamp(1.25rem, 3vw, 2rem); /* Reduced font size */
+    font-family: 'Noto Sans JP', Arial, sans-serif;
+    font-weight: 900;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin: 8rem auto 0; /* Centered with auto margins */
+    display: block; /* Needed for auto margins to work */
+}
+
+.login-button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 15px rgba(255, 85, 1, 0.4);
+}
+
+.signup-link {
+    display: block;
+    text-align: center;
+    margin-top: 1rem;
+    color: #f15a29;
+    font-weight: bold;
+    text-decoration: none;
+    font-size: 0.95rem;
+  }
+  
+  .signup-link:hover {
+    text-decoration: underline;
+  }
+  
+  @media (max-width: 768px) {
+    .login-form {
+      padding: 1.5rem;
+      gap: 1rem;
+    }
+    
+    .form-input {
+      padding: 1rem;
+    }
+  }

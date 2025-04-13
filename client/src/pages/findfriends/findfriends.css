@@ -1,0 +1,137 @@
+.search-input {
+    width: 120%;
+    padding: 0.5rem;
+    font-size: clamp(1rem, 1.5vw, 1.25rem);
+    border: 2px solid #ddd;
+    border-radius: 12px;
+    transition: all 0.3s ease;
+    box-sizing: border-box;
+    margin-bottom: 2rem;
+  }
+
+  .search-input:focus {
+    border-color: #FF5501;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(255, 85, 1, 0.2);
+  }
+
+  .search-button {
+    width: 20%; /* Keep or adjust as needed */
+    max-width: 200px; /* Reduced from 400px */
+    padding: clamp(0.5rem, 0.8vw, 1rem) 0; /* Reduced padding */
+    background: radial-gradient(ellipse at center, #FF7F36 19%, #FF5501 100%);
+    border: none;
+    border-radius: 60px;
+    color: white;
+    font-size: clamp(0.9rem, 1vw, 1.5rem); /* Reduced font size */
+    font-family: 'Noto Sans JP', Arial, sans-serif;
+    font-weight: 900;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    margin: 0auto 0; /* Reduced top margin to bring it up */
+    display: block;
+    position: relative; /* Allows for fine-tuned positioning */
+    top: -1vw; /* Optional: pulls the button up slightly more */
+}
+
+.friend-button {
+    /* Size and appearance */
+    min-width: 120px;
+    max-width: 200px;
+    padding: 0.5rem 1.5rem;
+    background: radial-gradient(ellipse at center, #FF7F36 19%, #FF5501 100%);
+    border: none;
+    border-radius: 60px;
+    
+    /* Text styling */
+    color: white;
+    font-size: 0.9rem;
+    font-family: Arial, sans-serif;
+    font-weight: 900;
+    text-align: center;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    line-height: 1.2;
+    
+    /* Positioning */
+    display: inline-block; /* or 'block' if you prefer */
+    margin-left: auto; /* Pushes button to right */
+    margin-right: 0;   /* Removes right margin */
+    margin-top: 0.5rem;
+    margin-bottom: 0.5rem;
+    
+    /* Effects */
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.search-button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 15px rgba(255, 85, 1, 0.4);
+}
+
+.friend-button:hover {
+    transform: scale(1.03);
+    box-shadow: 0 4px 15px rgba(255, 85, 1, 0.4);
+}
+
+        
+    .friends-page {
+      max-width: 50vw;
+      margin: 0 auto;
+      padding: 20px;
+    }
+    .search-container {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+    }
+    input {
+      flex: 1;
+      padding: 8px;
+    }
+    .results {
+      margin-top: 20px;
+    }
+    .user-card {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px;
+      border: 1px solid #ddd;
+      border-radius: 4px;
+      margin-bottom: 10px;
+      background-color: white;
+    }
+    .user-info {
+      display: flex;
+      flex-direction: column;
+    }
+    .username {
+      font-weight: bold;
+      margin-right:10rem;
+      margin-left: 1rem;
+      font-size: 1.25vw;
+    }
+
+    .name{
+        margin-right:10rem;
+        margin-left: 1rem;
+        font-size: 1vw; 
+    }
+    .email {
+      color:#EFE7DD;
+      font-size: 0.9em;
+    }
+    .message-friend {
+      padding: 10px;
+      background:#EFE7DD;
+      border-radius: 4px;
+      margin: 10px 0;
+    }
+    .request-sent {
+      color: #EFE7DD;
+      font-style: italic;
+    }

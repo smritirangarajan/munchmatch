@@ -1,0 +1,128 @@
+@font-face {
+    font-family: 'SuperLobster';
+    src: url('./munchfont.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+  }
+.login{
+    text-align: right;
+    justify-content: center;
+    display: flex;
+    flex-direction: column;
+    color: #FF5501;
+    font-size: 2vw; /* Font size relative to viewport width */
+    font-family: Arial, sans-serif;
+    font-weight: 100;
+    word-wrap: break-word;
+    padding: 2vw; /* Padding relative to viewport width */
+  }
+  
+  /* Styling for the Link */
+  .login-link {
+    color: #FF5501;
+    text-decoration: none; /* Removes underline */
+    font-size: 2vw; /* Font size relative to viewport width */
+    font-weight: 700;
+    transition: font-size 0.2s ease-in-out;
+  }
+  
+  /* Hover effect for the link */
+  .login-link:hover {
+    font-size: 2.1vw; /* Slightly larger on hover */
+  }
+
+  /* Container Flexbox for side-by-side content */
+.container {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center; /* Vertically centers items */
+    padding: 0 5vw; /* Optional: add padding for spacing */
+  }
+  
+  /* First div (MUNCH MATCH and Create account button) */
+  .left-container {
+    width: 60%;
+    padding-top: 10vh;
+    padding-bottom: 10vh;
+    background: #FFF6EC;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+  }
+  
+  /* MUNCH MATCH text styling */
+  .munch-match {
+    text-align: center;
+    color: #FF5501;
+    font-size: 13vw; /* Font size relative to screen size */
+    font-family: 'SuperLobster', sans-serif;
+    font-weight: 400;
+    word-wrap: break-word;
+    margin: 0; /* Ensure no extra space around text */
+  }
+  
+  
+  /* Button container */
+  .create-account-btn {
+    padding: 2vh 2vw;
+    background: radial-gradient(ellipse 50% 50% at 50% 50%, #FF7F36 0%, #F35100 59%);
+    border-radius: 50px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-width: 3vw; /* Ensures button width adjusts based on text */
+    min-height: 2vh; /* Ensures button height adjusts based on text */
+    transition: transform 0.3s ease-in-out; /* Smooth transition for scaling */
+  }
+
+  .create-account-btn:hover {
+    transform: scale(1.05); /* Button gets 5% bigger on hover */
+  }
+  
+  
+  /* Create Account text inside button */
+  
+.create-account-text {
+    color: white;
+    font-size: 0.9vw; /* Font size relative to screen size */
+    font-family: 'Anuphan', sans-serif;
+    font-weight: 700;
+    text-align: center;
+    white-space: nowrap; /* Prevents text from breaking into multiple lines */
+  }
+  
+  .create-account-text a {
+    color: white;
+    text-decoration: none; /* Remove underline */
+  }
+  
+  
+  .right-section {
+    flex: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    overflow: hidden;
+  }
+  
+  .image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    animation: pulse 2s infinite ease-in-out;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+  

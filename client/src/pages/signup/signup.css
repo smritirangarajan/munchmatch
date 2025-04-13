@@ -1,0 +1,117 @@
+/* signup.css */
+
+body {
+    margin: 0;
+    padding: 0;
+    background-color: #f15a29; /* Set full screen background to orange */
+    font-family: Arial, sans-serif;
+  }
+  
+  .signup-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    padding: 2rem;
+    box-sizing: border-box;
+  }
+  
+  .signup-box {
+    background-color: #fff6ec;
+    padding: 2rem;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    border-radius: 10px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    width: 90%;
+    max-width: 900px;
+  }
+  
+  .signup-form {
+    flex: 1;
+    margin-right: 2rem;
+  }
+  
+  .signup-form h2 {
+    color: #f15a29;
+    font-size: 2rem;
+    font-weight: bold;
+    margin-bottom: 1rem;
+  }
+  
+  .signup-form label {
+    display: block;
+    margin: 0.5rem 0 0.2rem;
+    font-size: 1rem;
+    font-weight: bold;
+    color: #333;
+  }
+  
+  .signup-form input[type="text"],
+  .signup-form input[type="password"] {
+    width: 100%;
+    padding: 0.5rem;
+    margin-bottom: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 1rem;
+    transition: border 0.3s, box-shadow 0.3s;
+  }
+  
+  .signup-form input[type="text"]:focus,
+  .signup-form input[type="password"]:focus {
+    border: 1px solid #f15a29;
+    box-shadow: 0 0 5px 2px rgba(241, 90, 41, 0.4);
+    outline: none;
+  }
+  
+  .signup-form .checkbox-group {
+    margin-bottom: 1rem;
+  }
+  
+  .signup-form button {
+    width: 100%;
+    padding: 0.75rem;
+    background-color: #f15a29;
+    color: white;
+    font-weight: bold;
+    font-size: 1.1rem;
+    border: none;
+    border-radius: 999px;
+    cursor: pointer;
+    transition: transform 0.2s ease;
+  }
+  
+  .signup-form button:hover {
+    transform: scale(1.05);
+    background-color: #d94f22;
+  }
+  
+  .signup-image {
+    flex: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+  
+  .signup-image img {
+    max-width: 100%;
+    height: auto;
+    border-radius: 10px;
+  }
+  
+  .signup-form .login-link {
+    display: block;
+    margin-top: 1rem;
+    text-align: center;
+    color: #f15a29;
+    text-decoration: none;
+    font-weight: bold;
+    font-size: 0.95rem;
+  }
+  
+  .signup-form .login-link:hover {
+    text-decoration: underline;
+  }
+  

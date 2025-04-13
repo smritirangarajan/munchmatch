@@ -1,0 +1,65 @@
+/* rating.css */
+
+.rating-screen {
+    min-height: 100vh;
+    background-color: #fff6ec;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 2rem;
+  }
+  
+  .rating-controls {
+    margin-top: 2rem;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+  }
+  
+  .rating-label {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+  
+  .star-container {
+    display: flex;
+    gap: 10px;
+    font-size: 2rem;
+    cursor: pointer;
+    margin-bottom: 1rem;
+  }
+  
+  .star {
+    color: #ccc;
+    transition: color 0.2s;
+  }
+  
+  .star.filled {
+    color: #f15a29;
+  }
+  
+ 
+  
+  .submit-rating {
+    background-color: #f15a29;
+    color: white;
+    font-weight: bold;
+    padding: 0.6rem 1.2rem;
+    border: none;
+    border-radius: 20px;
+    font-size: 1rem;
+    transition: transform 0.2s ease;
+  }
+  
+  .submit-rating:hover:not(:disabled) {
+    transform: scale(1.05);
+    background-color: #d94f22;
+  }
+  
+  .submit-rating:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  

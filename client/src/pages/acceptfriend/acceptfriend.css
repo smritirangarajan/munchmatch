@@ -1,0 +1,89 @@
+.img {
+    width: 40vw;
+    object-fit: cover;
+    animation: pulse 2s infinite ease-in-out;
+    /* Centering styles */
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top:-6vw;
+    /* Optional: Add max-width for very large screens */
+    max-width: 800px;
+}
+
+@keyframes pulse {
+    0% {
+        transform: scale(1);
+    }
+    50% {
+        transform: scale(1.05);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+.p{
+    color: black;
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-family: Arial, sans-serif;
+    font-weight: 900;
+    text-align: center;
+    margin-bottom: 0.5rem; /* Brings label closer to input */
+    margin-left: auto;
+    margin-right: auto;
+    margin-top:-5.3vw;
+  }
+
+  .friend-card {
+    background-color: #fff7f0;
+    border: 1px solid #ffe3d3;
+    border-radius: 12px;
+    padding: 16px;
+    margin: 10px auto;
+    max-width: 350px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.05);
+  }
+  
+  .friend-name {
+    font-weight: 600;
+    color: #333;
+  }
+  
+  .friend-buttons {
+    display: flex;
+    gap: 10px;
+  }
+  
+  .accept-button,
+  .delete-button {
+    background-color: #f1622a;
+    color: white;
+    border: none;
+    padding: 6px 16px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+  }
+  
+  .accept-button:hover,
+  .delete-button:hover {
+    background-color: #e0551c;
+  }
+
+  .message{
+    color: black;
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-family: Arial, sans-serif;
+    font-weight: 100;
+    text-align: center;
+    margin-bottom: 0.5rem; /* Brings label closer to input */
+    margin-left: auto;
+    margin-right: auto;
+    background-color:white;
+  }
+
+  

@@ -1,0 +1,14 @@
+{
+    "scripts": {
+        "dev": "concurrently \"npm run server\" \"npm run client\"",
+        "server": "cd server && nodemon index.js",
+        "client": "cd client && npm start"
+    },
+    "devDependencies": {
+        "autoprefixer": "^10.4.21",
+        "concurrently": "^8.2.0",
+        "nodemon": "^3.1.9",
+        "postcss": "^8.5.3",
+        "tailwindcss": "^4.1.3"
+    }
+}
