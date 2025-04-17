@@ -36,8 +36,3 @@ Filtered search results based on user-selected criteria
 Real-time updates on swipe actions and user preferences
 
 These API integrations make the app dynamic and responsive to user input.
-
-📁 Project Structure
-munchmatch/
-├── client/          # Frontend React application
-├── server/          # Backend Express server
