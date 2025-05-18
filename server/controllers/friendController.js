@@ -38,15 +38,12 @@ const findFriend = async (req, res) => {
 
 const sendFriendRequest = async (req, res) => {
     const { senderId, receiverId } = req.body;
-    console.log("doing")
-    console.log(senderId)
     try {
         const sender = await User.findOne({ userId: senderId });
         const receiver = await User.findOne({_id: receiverId });
         
 
         if (!sender || !receiver) {
-            console.log("generating")
             return res.status(404).json({ message: "User(s) not found" });
         }
 
@@ -70,8 +67,6 @@ const sendFriendRequest = async (req, res) => {
 
 const acceptFriendRequest = async (req, res) => {
     const { senderId, receiverId } = req.body; // Changed parameters for clarity
-    console.log("sender" + senderId)
-    console.log("receiver" + receiverId)
     try {
         const user = await User.findOne({ userId: receiverId });
         const requester = await User.findOne({userId: senderId});
@@ -120,9 +115,6 @@ const getFriends = async (req, res) => {
         id: friend.userId,  // The friend's userId
         name: friend.name   // The friend's name
       }));
-      friendList.forEach(friend => {
-        console.log(friend.name);  // This will log the name of each friend
-      });
       
   
       // Send the friend list as the response

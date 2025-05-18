@@ -65,10 +65,8 @@ const createDinnerPlan = async (req, res) => {
 
 // ✅ NEW CONTROLLER
 const getDinnerPlanForUser = async (req, res) => {
-  console.log("NEW CONTROLLER")
   try {
     const userId = req.query.userId;
-    console.log(userId)
 
     const plan = await DinnerPlan.findOne({
       $or: [
@@ -96,8 +94,6 @@ const getMatchingDetails = async (req, res) => {
       return res.status(400).json({ error: "User ID is required" });
     }
 
-    console.log("Fetching matching details for user:", userId);
-
     // Find the dinner plan where the user is either the creator or in the group
     const plan = await DinnerPlan.findOne({
       $or: [
@@ -118,22 +114,18 @@ const getMatchingDetails = async (req, res) => {
         done,
       });
     
-      console.log("Matching details found:", matchingDetails);
     } else {
       // If no plan is found, return a 404 with a message
-      console.log("No dinner plan found for the user.");
       res.status(404).json({ message: "No dinner plan found for this user." });
     }
     
   } catch (error) {
     // Handle server errors
-    console.error("Error fetching matching details:", error);
     res.status(500).json({ error: "Failed to fetch matching details." });
   }
 };
 
 const updateVote = async (req, res) => {
-  console.log("Updating vote...");
   const { userId, restaurantId, voteValue, restaurantDetails } = req.body;
 
   try {

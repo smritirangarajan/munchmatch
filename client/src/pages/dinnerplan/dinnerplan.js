@@ -99,7 +99,6 @@ const DinnerPlan = () => {
       });
 
       setMessage('Dinner Plan created successfully!');
-      console.log(res.data);
 
       navigate(finalMatchType === 'rating' ? '/rating' : '/matching');
     } catch (err) {

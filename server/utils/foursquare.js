@@ -66,16 +66,13 @@ async function getPlaceDetails(placeId) {
 
 const findMatches = async (req, res) => {
   const { address, city, state, zipCode, radius, budget, diningStyle, cuisines, matchType } = req.query;
-  console.log("➡️ Starting restaurant search...");
 
   const fullAddress = `${address}, ${city}, ${state} ${zipCode}`;
-  console.log("addy", fullAddress);
   let latitude, longitude;
   try {
     const coords = await geocodeAddress(fullAddress);
     latitude = coords.latitude;
     longitude = coords.longitude;
-    console.log(`✅ Got coordinates: (${latitude}, ${longitude})`);
   } catch (err) {
     console.error("❌ Error during geocoding:", err.message);
     throw new Error("Failed to geocode address.");
@@ -100,11 +97,9 @@ const params = {
 };
 
 
-  console.log("📡 Sending request to Google Places...");
   try {
     const response = await axios.get("https://maps.googleapis.com/maps/api/place/nearbysearch/json", { params });
     const results = response.data.results;
-    console.log(`✅ Received ${results.length} restaurants`);
 
     // Process restaurants in parallel with menu details
     const formatted = await Promise.all(results.map(async (restaurant, i) => {

@@ -9,12 +9,6 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-console.log('Environment Variables:', {
-  MONGO_URI: process.env.MONGO_URI,
-  DB_USER: process.env.DB_USER,
-  PORT: process.env.PORT
-});
-
 // Connect to MongoDB
 connectMongoDB();
 
