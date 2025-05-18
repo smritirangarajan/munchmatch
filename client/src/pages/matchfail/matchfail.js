@@ -5,11 +5,12 @@ import './matchfail.css'; // Import the styling
 
 const NoMatches = () => {
   const navigate = useNavigate();
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const userId = JSON.parse(localStorage.getItem("userId"))?.userId;
 
   const deleteDinnerPlan = async () => {
     try {
-      await axios.delete(`https://munchmatch.onrender.com/api/dinner-plan/delete/${userId}`);
+      await axios.delete(`${BASE_URL}/api/dinner-plan/delete/${userId}`);
     } catch (err) {
       console.error("Failed to delete dinner plan:", err);
     }

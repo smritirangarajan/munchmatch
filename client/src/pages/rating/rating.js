@@ -6,6 +6,7 @@ import "./rating.css";
 import munchImage from "..//landing/munch.png";
 
 const RatingScreen = () => {
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const [restaurants, setRestaurants] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [matchingDetails, setMatchingDetails] = useState(null);
@@ -25,7 +26,7 @@ const RatingScreen = () => {
     const fetchMatchingDetails = async () => {
       if (!userId) return;
       try {
-        const res = await axios.get("https://munchmatch.onrender.com/api/dinner-plan/get-matching-details", {
+        const res = await axios.get(`${BASE_URL}/api/dinner-plan/get-matching-details`, {
           params: { userId }
         });
         const details = res.data;
@@ -51,7 +52,7 @@ const RatingScreen = () => {
     const interval = setInterval(fetchMatchingDetails, 3000);
     fetchMatchingDetails();
     return () => clearInterval(interval);
-  }, [userId, navigate]);
+  }, [userId, navigate, BASE_URL]);
 
   useEffect(() => {
     if (matchingDetails) {
@@ -62,7 +63,7 @@ const RatingScreen = () => {
         } = matchingDetails.matchingDetails;
 
         try {
-          const res = await axios.get("https://munchmatch.onrender.com/api/foursquare/find-matches", {
+          const res = await axios.get(`${BASE_URL}/api/foursquare/find-matches`, {
             params: {
               address: streetAddress,
               city, state, zipCode,
@@ -79,14 +80,14 @@ const RatingScreen = () => {
       };
       fetchRestaurants();
     }
-  }, [matchingDetails]);
+  }, [matchingDetails, BASE_URL]);
 
   const handleVote = async () => {
     if (!restaurants[currentIndex]) return;
 
     const currentRestaurant = restaurants[currentIndex];
     try {
-      await axios.patch("https://munchmatch.onrender.com/api/dinner-plan/update-vote", {
+      await axios.patch(`${BASE_URL}/api/dinner-plan/update-vote`, {
         userId,
         restaurantId: currentRestaurant.id,
         voteValue: rating,
@@ -94,7 +95,7 @@ const RatingScreen = () => {
       });
 
       if (currentIndex + 1 >= restaurants.length) {
-        await axios.patch("https://munchmatch.onrender.com/api/dinner-plan/mark-user-done", { userId });
+        await axios.patch(`${BASE_URL}/api/dinner-plan/mark-user-done`, { userId });
         setUserDone(true);
       } else {
         setCurrentIndex(prev => prev + 1);

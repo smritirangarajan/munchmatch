@@ -6,6 +6,7 @@ import munchImage from "..//landing/munch.png";
 import "./match.css";
 
 const MatchScreen = () => {
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const [restaurants, setRestaurants] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [matchingDetails, setMatchingDetails] = useState(null);
@@ -15,19 +16,17 @@ const MatchScreen = () => {
   const [groupUsers, setGroupUsers] = useState([]);
   const navigate = useNavigate();
 
-  // Get userId
   useEffect(() => {
     const fetchedUserId = JSON.parse(localStorage.getItem("userId"))?.userId;
     setUserId(fetchedUserId);
   }, []);
 
-  // Fetch matching details and poll for updates
   useEffect(() => {
     const fetchMatchingDetails = async () => {
       if (!userId) return;
 
       try {
-        const res = await axios.get("https://munchmatch.onrender.com/api/dinner-plan/get-matching-details", {
+        const res = await axios.get(`${BASE_URL}/api/dinner-plan/get-matching-details`, {
           params: { userId }
         });
         const details = res.data;
@@ -54,9 +53,8 @@ const MatchScreen = () => {
     fetchMatchingDetails();
 
     return () => clearInterval(interval);
-  }, [userId, navigate]);
+  }, [userId, navigate, BASE_URL]);
 
-  // Fetch restaurants once matching details are available
   useEffect(() => {
     if (matchingDetails) {
       const fetchRestaurants = async () => {
@@ -66,17 +64,17 @@ const MatchScreen = () => {
         } = matchingDetails.matchingDetails;
 
         try {
-          const res = await axios.get("https://munchmatch.onrender.com/api/foursquare/find-matches", {
+          const res = await axios.get(`${BASE_URL}/api/foursquare/find-matches`, {
             params: {
               address: streetAddress,
-              city: city,
-              state: state,
-              zipCode: zipCode,
-              radius: radius,
-              budget: budget,
-              diningStyle: diningStyle,
+              city,
+              state,
+              zipCode,
+              radius,
+              budget,
+              diningStyle,
               cuisines: (cuisines || []).join(","),
-              matchType: matchType,
+              matchType
             }
           });
           setRestaurants(res.data);
@@ -87,7 +85,7 @@ const MatchScreen = () => {
       };
       fetchRestaurants();
     }
-  }, [matchingDetails]);
+  }, [matchingDetails, BASE_URL]);
 
   const handleVote = async (vote) => {
     if (!restaurants[currentIndex]) return;
@@ -96,7 +94,7 @@ const MatchScreen = () => {
     const voteValue = vote === "yes" ? 1 : 0;
 
     try {
-      await axios.patch("https://munchmatch.onrender.com/api/dinner-plan/update-vote", {
+      await axios.patch(`${BASE_URL}/api/dinner-plan/update-vote`, {
         userId,
         restaurantId: currentRestaurant.id,
         voteValue,
@@ -105,7 +103,7 @@ const MatchScreen = () => {
 
       if (currentIndex + 1 >= restaurants.length) {
         try {
-          await axios.patch("https://munchmatch.onrender.com/api/dinner-plan/mark-user-done", { userId });
+          await axios.patch(`${BASE_URL}/api/dinner-plan/mark-user-done`, { userId });
           setUserDone(true);
         } catch (err) {
           console.error("Failed to mark user as done:", err);

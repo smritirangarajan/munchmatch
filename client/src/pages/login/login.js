@@ -7,17 +7,17 @@ const LoginPage = ({ setIsLoggedIn }) => {
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
   const navigate = useNavigate();
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
-      const res = await axios.post("https://munchmatch.onrender.com/api/auth/login", {
+      const res = await axios.post(`${BASE_URL}/api/auth/login`, {
         userId,
         password,
       });
 
-      // Optional: Store token or user info in localStorage
       localStorage.setItem("userId", JSON.stringify(res.data.user));
       setIsLoggedIn(true);
       navigate("/home");

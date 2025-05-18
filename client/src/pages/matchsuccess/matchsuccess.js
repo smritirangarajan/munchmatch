@@ -8,12 +8,13 @@ const MatchSuccessPage = () => {
   const navigate = useNavigate();
   const [restaurant, setRestaurant] = useState(null);
   const [showConfetti, setShowConfetti] = useState(true);
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const userId = JSON.parse(localStorage.getItem("userId"))?.userId;
 
   useEffect(() => {
     const fetchMatchResult = async () => {
       try {
-        const response = await axios.get(`https://munchmatch.onrender.com/api/dinner-plan/match-result/${userId}`);
+        const response = await axios.get(`${BASE_URL}/api/dinner-plan/match-result/${userId}`);
         setRestaurant(response.data);
       } catch (err) {
         console.error("Could not find a successful match:", err);
@@ -22,7 +23,7 @@ const MatchSuccessPage = () => {
     };
 
     fetchMatchResult();
-  }, [userId, navigate]);
+  }, [userId, navigate, BASE_URL]);
 
   useEffect(() => {
     const confettiTimeout = setTimeout(() => setShowConfetti(false), 5000);
@@ -31,7 +32,7 @@ const MatchSuccessPage = () => {
 
   const goToHome = async () => {
     try {
-      await axios.delete(`https://munchmatch.onrender.com/api/dinner-plan/delete/${userId}`);
+      await axios.delete(`${BASE_URL}/api/dinner-plan/delete/${userId}`);
       navigate("/");
     } catch (err) {
       console.error("Failed to delete dinner plan:", err);
@@ -40,7 +41,9 @@ const MatchSuccessPage = () => {
 
   if (!restaurant) return null;
 
-  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(restaurant.name + ' ' + restaurant.address)}`;
+  const mapsUrl = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
+    restaurant.name + " " + restaurant.address
+  )}`;
 
   return (
     <div className="success-page">

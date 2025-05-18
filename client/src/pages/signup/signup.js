@@ -1,11 +1,13 @@
 import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
-import "./signup.css"; // Import CSS
+import "./signup.css";
 import burgerImage from "..//landing/munch.png";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
   const [form, setForm] = useState({
     name: "",
     userId: "",
@@ -37,7 +39,7 @@ const SignUpPage = () => {
     }
 
     try {
-      await axios.post("https://munchmatch.onrender.com/api/auth/signup", {
+      await axios.post(`${BASE_URL}/api/auth/signup`, {
         name: form.name,
         userId: form.userId,
         password: form.password,

@@ -8,13 +8,14 @@ const AcceptFriends = () => {
   const [incomingRequests, setIncomingRequests] = useState([]);
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const fetchFriendRequests = async () => {
     try {
       const storedUser = JSON.parse(localStorage.getItem("userId"));
       const userId = storedUser.userId;
 
-      const response = await axios.get("https://munchmatch.onrender.com/api/friends/requests", {
+      const response = await axios.get(`${BASE_URL}/api/friends/requests`, {
         params: { userId },
       });
 
@@ -26,7 +27,7 @@ const AcceptFriends = () => {
 
   const declineFriendRequest = async (senderId, receiverId) => {
     try {
-      const response = await fetch("https://munchmatch.onrender.com/api/friends/decline", {
+      const response = await fetch(`${BASE_URL}/api/friends/decline`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -60,7 +61,7 @@ const AcceptFriends = () => {
 
   const handleAcceptRequest = async (senderId) => {
     try {
-      await axios.post("https://munchmatch.onrender.com/api/friends/accept-request", {
+      await axios.post(`${BASE_URL}/api/friends/accept-request`, {
         senderId,
         receiverId: JSON.parse(localStorage.getItem("userId")).userId,
       });

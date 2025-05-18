@@ -5,6 +5,7 @@ import './dinnerplan.css';
 
 const DinnerPlan = () => {
   const navigate = useNavigate();
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
   const [creator, setCreator] = useState('');
   const [group, setGroup] = useState(['']);
@@ -18,7 +19,7 @@ const DinnerPlan = () => {
   const [radius, setRadius] = useState('');
   const [message, setMessage] = useState('');
   const [friends, setFriends] = useState([]);
-  const [commonCuisines, setCommonCuisines] = useState([
+  const [commonCuisines] = useState([
     'Any','Italian', 'Chinese', 'Indian', 'Mexican', 'Japanese', 'Mediterranean', 'American', 'Thai', 'French'
   ]);
 
@@ -27,7 +28,6 @@ const DinnerPlan = () => {
       try {
         const userData = JSON.parse(localStorage.getItem("userId"));
         const currentUserId = userData?.userId;
-
         if (!currentUserId) {
           console.error('User ID not found');
           return;
@@ -35,7 +35,7 @@ const DinnerPlan = () => {
 
         setCreator(currentUserId);
 
-        const friendsRes = await axios.get('https://munchmatch.onrender.com/api/friends/dinner-friend', {
+        const friendsRes = await axios.get(`${BASE_URL}/api/friends/dinner-friend`, {
           params: { userId: currentUserId }
         });
 
@@ -46,7 +46,7 @@ const DinnerPlan = () => {
     };
 
     fetchUserData();
-  }, []);
+  }, [BASE_URL]);
 
   const handleGroupChange = (index, value) => {
     const newGroup = [...group];
@@ -56,10 +56,7 @@ const DinnerPlan = () => {
 
   const addGroupMember = () => {
     if (group.length < 4) {
-      const availableFriends = friends.filter(
-        friend => !group.includes(friend.id)
-      );
-      
+      const availableFriends = friends.filter(friend => !group.includes(friend.id));
       if (availableFriends.length > 0) {
         setGroup([...group, '']);
       } else {
@@ -87,7 +84,7 @@ const DinnerPlan = () => {
     const finalMatchType = totalGroupSize === 2 ? 'direct' : 'rating';
 
     try {
-      const res = await axios.post('https://munchmatch.onrender.com/api/dinner-plan/', {
+      const res = await axios.post(`${BASE_URL}/api/dinner-plan/`, {
         creator,
         group,
         budget,
@@ -104,12 +101,7 @@ const DinnerPlan = () => {
       setMessage('Dinner Plan created successfully!');
       console.log(res.data);
 
-      if (finalMatchType === 'rating') {
-        navigate('/rating');
-      } else {
-        navigate('/matching');
-      }
-
+      navigate(finalMatchType === 'rating' ? '/rating' : '/matching');
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'Failed to create dinner plan.';
       alert(errorMsg);

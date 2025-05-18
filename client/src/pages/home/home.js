@@ -8,13 +8,13 @@ const Home = () => {
   const [loading, setLoading] = useState(true);
   const [existingPlan, setExistingPlan] = useState(null);
   const navigate = useNavigate();
-
+  const BASE_URL = process.env.REACT_APP_API_BASE_URL;
   const currentUserId = JSON.parse(localStorage.getItem("userId")).userId;
 
   useEffect(() => {
     const fetchFriendCount = async () => {
       try {
-        const response = await axios.get("https://munchmatch.onrender.com/api/friends/count", {
+        const response = await axios.get(`${BASE_URL}/api/friends/count`, {
           params: { userId: currentUserId }
         });
         setFriendsCount(response.data.count);
@@ -27,7 +27,7 @@ const Home = () => {
 
     const fetchDinnerPlan = async () => {
       try {
-        const res = await axios.get("https://munchmatch.onrender.com/api/dinner-plan/user", {
+        const res = await axios.get(`${BASE_URL}/api/dinner-plan/user`, {
           params: { userId: currentUserId }
         });
 
@@ -43,7 +43,7 @@ const Home = () => {
       fetchFriendCount();
       fetchDinnerPlan();
     }
-  }, [currentUserId]);
+  }, [currentUserId, BASE_URL]);
 
   const navigateToFindFriends = () => navigate("/findfriends");
   const navigateToAcceptFriendRequests = () => navigate("/acceptfriend");
