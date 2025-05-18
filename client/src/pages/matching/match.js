@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import axios from "axios";
 import RestaurantCard from "../../components/RestaurantCard";
 import { useNavigate } from "react-router-dom";
-import munchImage from '..//landing/munch.png';
+import munchImage from "..//landing/munch.png";
 import "./match.css";
 
 const MatchScreen = () => {
@@ -17,20 +17,17 @@ const MatchScreen = () => {
 
   // Get userId
   useEffect(() => {
-    const fetchUserId = async () => {
-      const fetchedUserId = JSON.parse(localStorage.getItem("userId"))?.userId;
-      setUserId(fetchedUserId);
-    };
-    fetchUserId();
+    const fetchedUserId = JSON.parse(localStorage.getItem("userId"))?.userId;
+    setUserId(fetchedUserId);
   }, []);
 
-  // Fetch matching details and keep polling for updates
+  // Fetch matching details and poll for updates
   useEffect(() => {
     const fetchMatchingDetails = async () => {
       if (!userId) return;
 
       try {
-        const res = await axios.get("http://localhost:5000/api/dinner-plan/get-matching-details", {
+        const res = await axios.get("https://munchmatch.onrender.com/api/dinner-plan/get-matching-details", {
           params: { userId }
         });
         const details = res.data;
@@ -69,7 +66,7 @@ const MatchScreen = () => {
         } = matchingDetails.matchingDetails;
 
         try {
-          const res = await axios.get("http://localhost:5000/api/foursquare/find-matches", {
+          const res = await axios.get("https://munchmatch.onrender.com/api/foursquare/find-matches", {
             params: {
               address: streetAddress,
               city: city,
@@ -99,17 +96,16 @@ const MatchScreen = () => {
     const voteValue = vote === "yes" ? 1 : 0;
 
     try {
-      await axios.patch("http://localhost:5000/api/dinner-plan/update-vote", {
+      await axios.patch("https://munchmatch.onrender.com/api/dinner-plan/update-vote", {
         userId,
         restaurantId: currentRestaurant.id,
         voteValue,
         restaurantDetails: currentRestaurant,
       });
 
-      // Check if this was the last restaurant
       if (currentIndex + 1 >= restaurants.length) {
         try {
-          await axios.patch("http://localhost:5000/api/dinner-plan/mark-user-done", { userId });
+          await axios.patch("https://munchmatch.onrender.com/api/dinner-plan/mark-user-done", { userId });
           setUserDone(true);
         } catch (err) {
           console.error("Failed to mark user as done:", err);
@@ -123,72 +119,62 @@ const MatchScreen = () => {
   };
 
   if (isLoading || !matchingDetails) {
-    return  <div className="waiting-screen">
-                  
-    <img src={munchImage} alt="Description" className="img" />
-    <p className="p">Loading Details</p>
-    
-    </div>
+    return (
+      <div className="waiting-screen">
+        <img src={munchImage} alt="Description" className="img" />
+        <p className="p">Loading Details</p>
+      </div>
+    );
   }
 
   if (userDone) {
     return (
       <div className="waiting-screen">
-                  
-    <img src={munchImage} alt="Description" className="img" />
-    <p className="p">Waiting for Others to Finish Matching</p>
-    
-    </div>
+        <img src={munchImage} alt="Description" className="img" />
+        <p className="p">Waiting for Others to Finish Matching</p>
+      </div>
     );
   }
+
   const imageUrl = restaurants[currentIndex]?.image;
+
   return (
     <div className="match-screen">
-    {restaurants[currentIndex] ? (
-      <div className="restaurant-card">
-        <div className="restaurant-name">{restaurants[currentIndex].name}</div>
-  
-        <img
-  className="restaurant-image"
-  src={imageUrl}
-  alt="Restaurant"
-/>
-  
-        {restaurants[currentIndex].menu?.available && restaurants[currentIndex].menu?.url && (
-          <a
-            href={restaurants[currentIndex].menu.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            className="menu-button"
-          >
-            View Full Menu
-          </a>
-        )}
-  
-        <div className="restaurant-info">
-          <p><strong>Distance:</strong> {restaurants[currentIndex].distance || 'N/A'} miles</p>
-          <p><strong>Rating:</strong> {restaurants[currentIndex].rating || 'N/A'}</p>
-          <p><strong>Description:</strong> {restaurants[currentIndex].menu?.description || 'No description available.'}</p>
+      {restaurants[currentIndex] ? (
+        <div className="restaurant-card">
+          <div className="restaurant-name">{restaurants[currentIndex].name}</div>
+
+          <img className="restaurant-image" src={imageUrl} alt="Restaurant" />
+
+          {restaurants[currentIndex].menu?.available && restaurants[currentIndex].menu?.url && (
+            <a
+              href={restaurants[currentIndex].menu.url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="menu-button"
+            >
+              View Full Menu
+            </a>
+          )}
+
+          <div className="restaurant-info">
+            <p><strong>Distance:</strong> {restaurants[currentIndex].distance || 'N/A'} miles</p>
+            <p><strong>Rating:</strong> {restaurants[currentIndex].rating || 'N/A'}</p>
+            <p><strong>Description:</strong> {restaurants[currentIndex].menu?.description || 'No description available.'}</p>
+          </div>
+
+          <div className="vote-buttons">
+            <button onClick={() => handleVote("no")} className="vote-button vote-no">No</button>
+            <button onClick={() => handleVote("yes")} className="vote-button vote-yes">Yes</button>
+          </div>
         </div>
-  
-        <div className="vote-buttons">
-          <button onClick={() => handleVote("no")} className="vote-button vote-no">No</button>
-          <button onClick={() => handleVote("yes")} className="vote-button vote-yes">Yes</button>
+      ) : (
+        <div className="match-screen">
+          <img className="restaurant-image" src={imageUrl} alt="Restaurant" />
+          <p>Loading...</p>
         </div>
-      </div>
-    ) : (
-      <div className="match-screen">
-      
-      <img
-  className="restaurant-image"
-  src={imageUrl}
-  alt="Restaurant"
-/>
-        <p>Loading...</p>
-      </div>
-    )}
-  </div>
-  
+      )}
+    </div>
   );
 };
 

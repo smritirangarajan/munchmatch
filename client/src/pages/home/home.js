@@ -14,7 +14,7 @@ const Home = () => {
   useEffect(() => {
     const fetchFriendCount = async () => {
       try {
-        const response = await axios.get("http://localhost:5000/api/friends/count", {
+        const response = await axios.get("https://munchmatch.onrender.com/api/friends/count", {
           params: { userId: currentUserId }
         });
         setFriendsCount(response.data.count);
@@ -27,7 +27,7 @@ const Home = () => {
 
     const fetchDinnerPlan = async () => {
       try {
-        const res = await axios.get("http://localhost:5000/api/dinner-plan/user", {
+        const res = await axios.get("https://munchmatch.onrender.com/api/dinner-plan/user", {
           params: { userId: currentUserId }
         });
 
@@ -62,42 +62,42 @@ const Home = () => {
 
   return (
     <div className="home-container">
-    <div className="header">Let's Get Munching</div>
-    
-    <div className="card-container">
-      {/* Card 1 */}
-      <div className="card">
-      <div className="card-title">Find Friends</div>
-        <div className="card-text">
-          Find friends to add them to your Munching Plans.
-        </div>
-        <button onClick={navigateToFindFriends} className="card-button">Find Now</button>
-      </div>
+      <div className="header">Let's Get Munching</div>
       
-      {/* Card 2 */}
-      <div className="card">
-      <div className="card-title">Friend Requests</div>
-        <div className="card-text">
-          Accept friend requests to be added and add friends to your plans
+      <div className="card-container">
+        {/* Card 1 */}
+        <div className="card">
+          <div className="card-title">Find Friends</div>
+          <div className="card-text">
+            Find friends to add them to your Munching Plans.
+          </div>
+          <button onClick={navigateToFindFriends} className="card-button">Find Now</button>
         </div>
-        <button onClick={navigateToAcceptFriendRequests} className="card-button">See Requests</button>
-      </div>
-      
-      {/* Card 3 */}
-      <div className="card">
-      <div className="card-title">Match & Munch</div>
-        <div className="card-text">
-          Add in requirements for your munch and get matching!
+        
+        {/* Card 2 */}
+        <div className="card">
+          <div className="card-title">Friend Requests</div>
+          <div className="card-text">
+            Accept friend requests to be added and add friends to your plans
+          </div>
+          <button onClick={navigateToAcceptFriendRequests} className="card-button">See Requests</button>
         </div>
-        {!existingPlan && (
-        <button onClick={navigateToDinnerPlan} className="card-button">Find Match</button>
-      )}
-      {existingPlan && (
-        <button onClick={navigateToCurrentPlan} className="card-button">Continue Matching</button>
-      )}
+        
+        {/* Card 3 */}
+        <div className="card">
+          <div className="card-title">Match & Munch</div>
+          <div className="card-text">
+            Add in requirements for your munch and get matching!
+          </div>
+          {!existingPlan && (
+            <button onClick={navigateToDinnerPlan} className="card-button">Find Match</button>
+          )}
+          {existingPlan && (
+            <button onClick={navigateToCurrentPlan} className="card-button">Continue Matching</button>
+          )}
+        </div>
       </div>
     </div>
-  </div>
   );
 };
 

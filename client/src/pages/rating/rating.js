@@ -3,7 +3,7 @@ import axios from "axios";
 import RestaurantCard from "../../components/RestaurantCard";
 import { useNavigate } from "react-router-dom";
 import "./rating.css";
-import munchImage from '..//landing/munch.png';
+import munchImage from "..//landing/munch.png";
 
 const RatingScreen = () => {
   const [restaurants, setRestaurants] = useState([]);
@@ -25,7 +25,7 @@ const RatingScreen = () => {
     const fetchMatchingDetails = async () => {
       if (!userId) return;
       try {
-        const res = await axios.get("http://localhost:5000/api/dinner-plan/get-matching-details", {
+        const res = await axios.get("https://munchmatch.onrender.com/api/dinner-plan/get-matching-details", {
           params: { userId }
         });
         const details = res.data;
@@ -62,7 +62,7 @@ const RatingScreen = () => {
         } = matchingDetails.matchingDetails;
 
         try {
-          const res = await axios.get("http://localhost:5000/api/foursquare/find-matches", {
+          const res = await axios.get("https://munchmatch.onrender.com/api/foursquare/find-matches", {
             params: {
               address: streetAddress,
               city, state, zipCode,
@@ -86,7 +86,7 @@ const RatingScreen = () => {
 
     const currentRestaurant = restaurants[currentIndex];
     try {
-      await axios.patch("http://localhost:5000/api/dinner-plan/update-vote", {
+      await axios.patch("https://munchmatch.onrender.com/api/dinner-plan/update-vote", {
         userId,
         restaurantId: currentRestaurant.id,
         voteValue: rating,
@@ -94,7 +94,7 @@ const RatingScreen = () => {
       });
 
       if (currentIndex + 1 >= restaurants.length) {
-        await axios.patch("http://localhost:5000/api/dinner-plan/mark-user-done", { userId });
+        await axios.patch("https://munchmatch.onrender.com/api/dinner-plan/mark-user-done", { userId });
         setUserDone(true);
       } else {
         setCurrentIndex(prev => prev + 1);
@@ -121,18 +121,23 @@ const RatingScreen = () => {
     return stars;
   };
 
-  if (isLoading || !matchingDetails) return <div className="waiting-screen">
-                    
-      <img src={munchImage} alt="Description" className="img" />
-      <p className="p">Loading Details</p>
-      
-      </div>;
-  if (userDone) return <div className="waiting-screen">
-                    
-      <img src={munchImage} alt="Description" className="img" />
-      <p className="p">Waiting for others to finish matching!</p>
-      
-      </div>;
+  if (isLoading || !matchingDetails) {
+    return (
+      <div className="waiting-screen">
+        <img src={munchImage} alt="Loading" className="img" />
+        <p className="p">Loading Details</p>
+      </div>
+    );
+  }
+
+  if (userDone) {
+    return (
+      <div className="waiting-screen">
+        <img src={munchImage} alt="Waiting" className="img" />
+        <p className="p">Waiting for others to finish matching!</p>
+      </div>
+    );
+  }
 
   return (
     <div className="rating-screen">

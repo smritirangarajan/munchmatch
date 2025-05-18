@@ -3,7 +3,6 @@ import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './dinnerplan.css';
 
-
 const DinnerPlan = () => {
   const navigate = useNavigate();
 
@@ -17,7 +16,6 @@ const DinnerPlan = () => {
   const [state, setState] = useState('');
   const [zipCode, setZipCode] = useState('');
   const [radius, setRadius] = useState('');
-
   const [message, setMessage] = useState('');
   const [friends, setFriends] = useState([]);
   const [commonCuisines, setCommonCuisines] = useState([
@@ -37,7 +35,7 @@ const DinnerPlan = () => {
 
         setCreator(currentUserId);
 
-        const friendsRes = await axios.get('/api/friends/dinner-friend', {
+        const friendsRes = await axios.get('https://munchmatch.onrender.com/api/friends/dinner-friend', {
           params: { userId: currentUserId }
         });
 
@@ -58,7 +56,6 @@ const DinnerPlan = () => {
 
   const addGroupMember = () => {
     if (group.length < 4) {
-      // Check if there are any friends left to add
       const availableFriends = friends.filter(
         friend => !group.includes(friend.id)
       );
@@ -85,12 +82,12 @@ const DinnerPlan = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-  
+
     const totalGroupSize = 1 + group.length;
     const finalMatchType = totalGroupSize === 2 ? 'direct' : 'rating';
-  
+
     try {
-      const res = await axios.post('/api/dinner-plan/', {
+      const res = await axios.post('https://munchmatch.onrender.com/api/dinner-plan/', {
         creator,
         group,
         budget,
@@ -103,35 +100,34 @@ const DinnerPlan = () => {
         radius: Number(radius),
         matchType: finalMatchType,
       });
-  
+
       setMessage('Dinner Plan created successfully!');
       console.log(res.data);
-  
+
       if (finalMatchType === 'rating') {
         navigate('/rating');
       } else {
         navigate('/matching');
       }
-  
+
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'Failed to create dinner plan.';
-      alert(errorMsg); // ✅ Display error in an alert
+      alert(errorMsg);
     }
   };
-  // Filter friends to only show those not already in the group
+
   const getAvailableFriends = (currentIndex) => {
     return friends.filter(friend => {
-      // For the current select, don't filter out the currently selected friend
       if (group[currentIndex] === friend.id) return true;
-      // Filter out friends already selected in other group members
       return !group.includes(friend.id);
     });
   };
 
   return (
     <div className="dinner-page">
-    <form className="dinner-form" onSubmit={handleSubmit}>
-      <h2>Match Specifications</h2>
+      <form className="dinner-form" onSubmit={handleSubmit}>
+        <h2>Match Specifications</h2>
+
         <div>
           <label>Group Members:</label>
           {group.map((member, index) => (
@@ -152,7 +148,6 @@ const DinnerPlan = () => {
           <button type="button" onClick={addGroupMember}>Add Member</button>
         </div>
 
-        {/* Rest of your form remains the same */}
         <div>
           <label>Budget:</label>
           <select value={budget} onChange={(e) => setBudget(e.target.value)} required>
@@ -246,8 +241,6 @@ const DinnerPlan = () => {
             required
           />
         </div>
-
-  
 
         <button type="submit">Create Dinner Plan</button>
       </form>

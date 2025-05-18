@@ -2,7 +2,7 @@ import React, { useState } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom";
 import "./signup.css"; // Import CSS
-import burgerImage from '..//landing/munch.png';
+import burgerImage from "..//landing/munch.png";
 
 const SignUpPage = () => {
   const navigate = useNavigate();
@@ -37,7 +37,7 @@ const SignUpPage = () => {
     }
 
     try {
-      await axios.post("http://localhost:5000/api/auth/signup", {
+      await axios.post("https://munchmatch.onrender.com/api/auth/signup", {
         name: form.name,
         userId: form.userId,
         password: form.password,
@@ -101,8 +101,8 @@ const SignUpPage = () => {
 
           <button type="submit">Sign up</button>
           <a href="/login" className="login-link">
-    Already have an account? Log in
-  </a>
+            Already have an account? Log in
+          </a>
         </form>
 
         <div className="signup-image">
@@ -110,7 +110,6 @@ const SignUpPage = () => {
         </div>
       </div>
     </div>
-
   );
 };
 

@@ -13,7 +13,7 @@ const MatchSuccessPage = () => {
   useEffect(() => {
     const fetchMatchResult = async () => {
       try {
-        const response = await axios.get(`http://localhost:5000/api/dinner-plan/match-result/${userId}`);
+        const response = await axios.get(`https://munchmatch.onrender.com/api/dinner-plan/match-result/${userId}`);
         setRestaurant(response.data);
       } catch (err) {
         console.error("Could not find a successful match:", err);
@@ -31,7 +31,7 @@ const MatchSuccessPage = () => {
 
   const goToHome = async () => {
     try {
-      await axios.delete(`http://localhost:5000/api/dinner-plan/delete/${userId}`);
+      await axios.delete(`https://munchmatch.onrender.com/api/dinner-plan/delete/${userId}`);
       navigate("/");
     } catch (err) {
       console.error("Failed to delete dinner plan:", err);

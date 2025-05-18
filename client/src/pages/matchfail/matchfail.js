@@ -9,7 +9,7 @@ const NoMatches = () => {
 
   const deleteDinnerPlan = async () => {
     try {
-      await axios.delete(`http://localhost:5000/api/dinner-plan/delete/${userId}`);
+      await axios.delete(`https://munchmatch.onrender.com/api/dinner-plan/delete/${userId}`);
     } catch (err) {
       console.error("Failed to delete dinner plan:", err);
     }
