@@ -18,7 +18,7 @@ const friendRoutes = require("./routes/friendRoutes");
 //const userRoutes = require("./routes/userRoutes");
 const dinnerPlanRoutes = require("./routes/dinnerPlanRoutes");
 const matches = require("./routes/foursquareRoutes")
-const matchRoutes = require("./routes/matchRoutes");
+
 
 app.get('/favicon.ico', (req, res) => res.status(204));
 

@@ -1,5 +1,14 @@
 import React, { useState, useEffect } from "react";
-import { BrowserRouter as Router, Routes, Route, Link, Navigate, useLocation } from "react-router-dom";
+import {
+  BrowserRouter as Router,
+  Routes,
+  Route,
+  Link,
+  Navigate,
+  useLocation
+} from "react-router-dom";
+
+// Page imports
 import LandingPage from "./pages/landing/landing.js";
 import SignUp from "./pages/signup/signup.js";
 import Login from "./pages/login/login.js";
@@ -12,6 +21,7 @@ import RatingScreen from "./pages/rating/rating.js";
 import MatchSuccessPage from "./pages/matchsuccess/matchsuccess.js";
 import NoMatches from "./pages/matchfail/matchfail.js";
 
+// Simple responsive navigation bar component
 function NavBar({ isLoggedIn, handleLogout }) {
   return (
     <nav style={styles.navbar}>
@@ -34,6 +44,7 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false);
   const location = useLocation();
 
+  // Check login status on route change
   useEffect(() => {
     const storedUserId = localStorage.getItem("userId");
   
@@ -55,62 +66,44 @@ function App() {
     }
   }, [location.pathname]);
 
+  // Handle logout: clear state and reload to reset app
   const handleLogout = () => {
-    // Clear user data from localStorage
     localStorage.removeItem("userId");
     setIsLoggedIn(false);
-    window.location.href = "/"; // Full page reload to ensure clean state
+    window.location.href = "/"; // Full reload ensures no stale state
   };
 
-  // Don't show navbar on landing page, login, or signup pages
+  // Hide NavBar on public routes
   const hideNavbarPaths = ["/", "/login", "/signup"];
   const showNavbar = !hideNavbarPaths.includes(location.pathname);
 
   return (
     <>
+      {/* Conditionally render navbar */}
       {showNavbar && <NavBar isLoggedIn={isLoggedIn} handleLogout={handleLogout} />}
       
+      {/* Define application routes */}
       <Routes>
+        {/* Public routes */}
         <Route path="/" element={<LandingPage />} />
         <Route path="/signup" element={<SignUp />} />
         <Route path="/login" element={<Login setIsLoggedIn={setIsLoggedIn} />} />
-        <Route 
-          path="/home" 
-          element={isLoggedIn ? <Home /> : <Navigate to="/" />} 
-        />
-        <Route 
-          path="/findfriends" 
-          element={isLoggedIn ? <FindFriends /> : <Navigate to="/" />} 
-        />
-        <Route 
-          path="/acceptfriend" 
-          element={isLoggedIn ? <AcceptFriends /> : <Navigate to="/" />} 
-        />
-        <Route 
-          path="/dinnerplan" 
-          element={isLoggedIn ? <DinnerPlan /> : <Navigate to="/" />} 
-        />
-        <Route 
-          path="/matching" 
-          element={isLoggedIn ? <MatchScreen /> : <Navigate to="/" />} 
-        />
-        <Route 
-          path="/rating" 
-          element={isLoggedIn ? <RatingScreen /> : <Navigate to="/" />} 
-        />
-        <Route 
-          path="/matching-completed" 
-          element={isLoggedIn ? <MatchSuccessPage /> : <Navigate to="/" />} 
-        />
-        <Route 
-          path="/match-fail" 
-          element={isLoggedIn ? <NoMatches /> : <Navigate to="/" />} 
-        />
+
+        {/* Protected routes */}
+        <Route path="/home" element={isLoggedIn ? <Home /> : <Navigate to="/" />} />
+        <Route path="/findfriends" element={isLoggedIn ? <FindFriends /> : <Navigate to="/" />} />
+        <Route path="/acceptfriend" element={isLoggedIn ? <AcceptFriends /> : <Navigate to="/" />} />
+        <Route path="/dinnerplan" element={isLoggedIn ? <DinnerPlan /> : <Navigate to="/" />} />
+        <Route path="/matching" element={isLoggedIn ? <MatchScreen /> : <Navigate to="/" />} />
+        <Route path="/rating" element={isLoggedIn ? <RatingScreen /> : <Navigate to="/" />} />
+        <Route path="/matching-completed" element={isLoggedIn ? <MatchSuccessPage /> : <Navigate to="/" />} />
+        <Route path="/match-fail" element={isLoggedIn ? <NoMatches /> : <Navigate to="/" />} />
       </Routes>
     </>
   );
 }
 
+// Basic navbar styling
 const styles = {
   navbar: {
     padding: "1rem 2rem",
@@ -131,10 +124,9 @@ const styles = {
     fontSize: "inherit",
     fontFamily: "inherit"
   },
-  
 };
 
-// We need to wrap App with Router in a parent component
+// AppWrapper: provides routing context to <App />
 function AppWrapper() {
   return (
     <Router>

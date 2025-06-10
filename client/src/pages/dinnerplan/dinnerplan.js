@@ -7,8 +7,9 @@ const DinnerPlan = () => {
   const navigate = useNavigate();
   const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
+  // State for user and form inputs
   const [creator, setCreator] = useState('');
-  const [group, setGroup] = useState(['']);
+  const [group, setGroup] = useState(['']); // List of selected friend IDs
   const [budget, setBudget] = useState('');
   const [diningStyle, setDiningStyle] = useState('');
   const [cuisines, setCuisines] = useState(['']);
@@ -18,11 +19,15 @@ const DinnerPlan = () => {
   const [zipCode, setZipCode] = useState('');
   const [radius, setRadius] = useState('');
   const [message, setMessage] = useState('');
-  const [friends, setFriends] = useState([]);
+  const [friends, setFriends] = useState([]); // All available friends
+
+  // List of cuisine options
   const [commonCuisines] = useState([
-    'Any','Italian', 'Chinese', 'Indian', 'Mexican', 'Japanese', 'Mediterranean', 'American', 'Thai', 'French'
+    'Any','Italian', 'Chinese', 'Indian', 'Mexican', 'Japanese', 
+    'Mediterranean', 'American', 'Thai', 'French'
   ]);
 
+  // Fetch user data and available friends on mount
   useEffect(() => {
     const fetchUserData = async () => {
       try {
@@ -33,8 +38,9 @@ const DinnerPlan = () => {
           return;
         }
 
-        setCreator(currentUserId);
+        setCreator(currentUserId); // Store current user ID as creator
 
+        // Fetch the user's friends eligible for dinner plans
         const friendsRes = await axios.get(`${BASE_URL}/api/friends/dinner-friend`, {
           params: { userId: currentUserId }
         });
@@ -48,12 +54,14 @@ const DinnerPlan = () => {
     fetchUserData();
   }, [BASE_URL]);
 
+  // Handle friend selection change in group
   const handleGroupChange = (index, value) => {
     const newGroup = [...group];
     newGroup[index] = value;
     setGroup(newGroup);
   };
 
+  // Add a new member to the group, up to 4 total
   const addGroupMember = () => {
     if (group.length < 4) {
       const availableFriends = friends.filter(friend => !group.includes(friend.id));
@@ -67,24 +75,28 @@ const DinnerPlan = () => {
     }
   };
 
+  // Handle cuisine selection change
   const handleCuisineChange = (index, value) => {
     const newCuisines = [...cuisines];
     newCuisines[index] = value;
     setCuisines(newCuisines);
   };
 
+  // Add another cuisine preference
   const addCuisine = () => {
     setCuisines([...cuisines, '']);
   };
 
+  // Submit the dinner plan form
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    const totalGroupSize = 1 + group.length;
+    // Determine match type based on group size
+    const totalGroupSize = 1 + group.length; // creator + group
     const finalMatchType = totalGroupSize === 2 ? 'direct' : 'rating';
 
     try {
-      const res = await axios.post(`${BASE_URL}/api/dinner-plan/`, {
+      await axios.post(`${BASE_URL}/api/dinner-plan/`, {
         creator,
         group,
         budget,
@@ -100,6 +112,7 @@ const DinnerPlan = () => {
 
       setMessage('Dinner Plan created successfully!');
 
+      // Navigate to the appropriate matching page
       navigate(finalMatchType === 'rating' ? '/rating' : '/matching');
     } catch (err) {
       const errorMsg = err.response?.data?.message || 'Failed to create dinner plan.';
@@ -107,6 +120,7 @@ const DinnerPlan = () => {
     }
   };
 
+  // Filter out already selected friends to prevent duplicates
   const getAvailableFriends = (currentIndex) => {
     return friends.filter(friend => {
       if (group[currentIndex] === friend.id) return true;
@@ -119,6 +133,7 @@ const DinnerPlan = () => {
       <form className="dinner-form" onSubmit={handleSubmit}>
         <h2>Match Specifications</h2>
 
+        {/* Group member selectors */}
         <div>
           <label>Group Members:</label>
           {group.map((member, index) => (
@@ -139,6 +154,7 @@ const DinnerPlan = () => {
           <button type="button" onClick={addGroupMember}>Add Member</button>
         </div>
 
+        {/* Budget selector */}
         <div>
           <label>Budget:</label>
           <select value={budget} onChange={(e) => setBudget(e.target.value)} required>
@@ -149,6 +165,7 @@ const DinnerPlan = () => {
           </select>
         </div>
 
+        {/* Dining style selector */}
         <div>
           <label>Dining Style:</label>
           <select value={diningStyle} onChange={(e) => setDiningStyle(e.target.value)} required>
@@ -159,6 +176,7 @@ const DinnerPlan = () => {
           </select>
         </div>
 
+        {/* Cuisine preference selectors */}
         <div>
           <label>Cuisine Preferences:</label>
           {cuisines.map((cuisine, index) => (
@@ -169,9 +187,9 @@ const DinnerPlan = () => {
               required
             >
               <option value="">Select Cuisine</option>
-              {commonCuisines.map((cuisine) => (
-                <option key={cuisine} value={cuisine}>
-                  {cuisine}
+              {commonCuisines.map((cuisineOption) => (
+                <option key={cuisineOption} value={cuisineOption}>
+                  {cuisineOption}
                 </option>
               ))}
             </select>
@@ -179,6 +197,7 @@ const DinnerPlan = () => {
           <button type="button" onClick={addCuisine}>Add Cuisine</button>
         </div>
 
+        {/* Address and radius fields */}
         <div>
           <label>Street Address:</label>
           <input
@@ -233,9 +252,11 @@ const DinnerPlan = () => {
           />
         </div>
 
+        {/* Submit button */}
         <button type="submit">Create Dinner Plan</button>
       </form>
 
+      {/* Feedback message */}
       {message && <p>{message}</p>}
     </div>
   );

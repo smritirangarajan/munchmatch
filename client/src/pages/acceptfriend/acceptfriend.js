@@ -5,11 +5,14 @@ import "./acceptfriend.css";
 import munchImage from "..//landing/munch.png";
 
 const AcceptFriends = () => {
+  // State to store incoming friend requests and a status message
   const [incomingRequests, setIncomingRequests] = useState([]);
   const [message, setMessage] = useState("");
+
   const navigate = useNavigate();
   const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
+  // Fetch incoming friend requests from backend
   const fetchFriendRequests = async () => {
     try {
       const storedUser = JSON.parse(localStorage.getItem("userId"));
@@ -19,19 +22,20 @@ const AcceptFriends = () => {
         params: { userId },
       });
 
-      setIncomingRequests(response.data.requests);
+      setIncomingRequests(response.data.requests); // Save requests to state
     } catch (err) {
       setMessage("Failed to fetch friend requests.");
     }
   };
 
+  // Send POST request to decline a friend request
   const declineFriendRequest = async (senderId, receiverId) => {
     try {
       const response = await fetch(`${BASE_URL}/api/friends/decline`, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "user-id": receiverId,
+          "user-id": receiverId, // Custom header used by backend
         },
         body: JSON.stringify({ senderId, receiverId }),
       });
@@ -48,30 +52,35 @@ const AcceptFriends = () => {
     }
   };
 
+  // Handle decline button click
   const handleDecline = async (senderId) => {
     const currentUserId = JSON.parse(localStorage.getItem("userId")).userId;
     const result = await declineFriendRequest(senderId, currentUserId);
 
     if (result.success) {
+      // Remove declined request from state
       setIncomingRequests((prev) => prev.filter((r) => r.userId !== senderId));
     } else {
       alert("Failed to decline request: " + result.error);
     }
   };
 
+  // Handle accept button click
   const handleAcceptRequest = async (senderId) => {
     try {
       await axios.post(`${BASE_URL}/api/friends/accept-request`, {
         senderId,
         receiverId: JSON.parse(localStorage.getItem("userId")).userId,
       });
+
       setMessage("Friend request accepted.");
-      fetchFriendRequests();
+      fetchFriendRequests(); // Refresh the list
     } catch (err) {
       setMessage("Failed to accept request.");
     }
   };
 
+  // Fetch friend requests on component mount
   useEffect(() => {
     fetchFriendRequests();
   }, []);
@@ -80,12 +89,15 @@ const AcceptFriends = () => {
     <div style={{ width: "100vw", height: "100vh", position: "relative", background: "white", overflow: "hidden" }}>
       <div className="flex flex-col items-center mt-10 space-y-4">
         <div className="header">Friend Requests</div>
+
+        {/* If no requests, show image and message */}
         {incomingRequests.length === 0 ? (
           <div>
             <img src={munchImage} alt="No Requests" className="img" />
             <p className="p">No Incoming Friend Requests</p>
           </div>
         ) : (
+          // List all incoming requests
           <ul className="space-y-2">
             {incomingRequests.map((request) => (
               <li key={request._id} className="friend-card">
@@ -108,6 +120,8 @@ const AcceptFriends = () => {
             ))}
           </ul>
         )}
+
+        {/* Display success or error message */}
         <p className="message">{message}</p>
       </div>
     </div>

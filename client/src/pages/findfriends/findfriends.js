@@ -4,25 +4,31 @@ import axios from "axios";
 import './findfriends.css';
 
 const FindFriendsPage = () => {
-  const [searchTerm, setSearchTerm] = useState("");
-  const [foundUsers, setFoundUsers] = useState([]);
-  const [message, setMessage] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  // React state hooks for UI control
+  const [searchTerm, setSearchTerm] = useState("");         // Search input
+  const [foundUsers, setFoundUsers] = useState([]);         // List of matching users
+  const [message, setMessage] = useState("");               // Feedback message
+  const [isLoading, setIsLoading] = useState(false);        // Loading state
   const navigate = useNavigate();
 
+  // Triggered when user clicks 'Search' or presses Enter
   const handleFindFriend = async () => {
     if (!searchTerm.trim()) {
       setMessage("Please enter a username to search");
       return;
     }
 
+    // Clear results and show loading state
     setFoundUsers([]);
     setIsLoading(true);
     setMessage("");
 
     try {
+      // Fetch users that match the search term from backend
       const response = await axios.get(`https://munchmatch.onrender.com/api/friends/find-friends?username=${searchTerm}`);
       setFoundUsers(response.data.users);
+
+      // Show message if no matches are found
       if (response.data.users.length === 0) {
         setMessage("No users found");
       }
@@ -33,6 +39,7 @@ const FindFriendsPage = () => {
     }
   };
 
+  // Sends a friend request to the selected user
   const handleSendRequest = async (receiverId) => {
     const storedUser = JSON.parse(localStorage.getItem("userId"));
     const senderId = storedUser.userId;
@@ -43,14 +50,17 @@ const FindFriendsPage = () => {
     }
 
     try {
+      // POST request to send a friend request
       await axios.post("https://munchmatch.onrender.com/api/friends/send-request", {
         senderId,
         receiverId
       });
 
+      // Update local UI and show success message
       const receiver = foundUsers.find(user => user._id === receiverId);
       setMessage(`Friend request sent to ${receiver?.userId || "user"}!`);
 
+      // Mark user as "request sent" in the UI
       setFoundUsers(foundUsers.map(user =>
         user._id === receiverId ? { ...user, requestSent: true } : user
       ));
@@ -64,6 +74,7 @@ const FindFriendsPage = () => {
       <div className="friends-page">
         <div className="header">Find Friends</div>
 
+        {/* Search input box */}
         <div className="search-container">
           <input
             className="search-input"
@@ -75,12 +86,15 @@ const FindFriendsPage = () => {
           />
         </div>
 
+        {/* Search button */}
         <button className="search-button" onClick={handleFindFriend} disabled={isLoading}>
           {isLoading ? "Searching..." : "Search"}
         </button>
 
+        {/* Message output */}
         {message && <div className="message-friend">{message}</div>}
 
+        {/* Display list of found users */}
         <div className="results">
           {foundUsers.map(user => (
             <div key={user._id} className="user-card">
@@ -88,6 +102,8 @@ const FindFriendsPage = () => {
                 <span className="username">{user.userId}</span>
                 <span className="name">{user.name}</span>
               </div>
+
+              {/* Show request button or "sent" label based on state */}
               {!user.requestSent ? (
                 <button
                   onClick={() => handleSendRequest(user._id)}

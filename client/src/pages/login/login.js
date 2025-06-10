@@ -4,21 +4,28 @@ import { useNavigate } from "react-router-dom";
 import "./login.css";
 
 const LoginPage = ({ setIsLoggedIn }) => {
+  // Local state for user credentials
   const [userId, setUserId] = useState("");
   const [password, setPassword] = useState("");
+
   const navigate = useNavigate();
   const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
+  // Handle form submission
   const handleLogin = async (e) => {
     e.preventDefault();
 
     try {
+      // Send login request to backend
       const res = await axios.post(`${BASE_URL}/api/auth/login`, {
         userId,
         password,
       });
 
+      // Save user info in localStorage
       localStorage.setItem("userId", JSON.stringify(res.data.user));
+
+      // Update global login state and redirect to home
       setIsLoggedIn(true);
       navigate("/home");
     } catch (err) {
@@ -28,10 +35,21 @@ const LoginPage = ({ setIsLoggedIn }) => {
   };
 
   return (
-    <div style={{ width: "100vw", height: "100vh", position: "relative", background: "#FF5501", overflow: "hidden" }}>
+    <div
+      style={{
+        width: "100vw",
+        height: "100vh",
+        position: "relative",
+        background: "#FF5501",
+        overflow: "hidden"
+      }}
+    >
       <div className="login-container">
         <div className="login-header">Log in</div>
+
+        {/* Login form */}
         <form className="login-form" onSubmit={handleLogin}>
+          {/* Username input */}
           <div className="form-field">
             <div className="form-label">Username</div>
             <input
@@ -43,6 +61,7 @@ const LoginPage = ({ setIsLoggedIn }) => {
             />
           </div>
 
+          {/* Password input */}
           <div className="form-field">
             <div className="form-label">Password</div>
             <input
@@ -55,9 +74,12 @@ const LoginPage = ({ setIsLoggedIn }) => {
             />
           </div>
 
+          {/* Submit button */}
           <button type="submit" className="login-button">
             Log In
           </button>
+
+          {/* Link to sign-up page */}
           <a href="/signup" className="signup-link">
             Don’t have an account? Sign up
           </a>

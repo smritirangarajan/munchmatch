@@ -7,6 +7,9 @@ import "./match.css";
 
 const MatchScreen = () => {
   const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+  const navigate = useNavigate();
+
+  // State management
   const [restaurants, setRestaurants] = useState([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [matchingDetails, setMatchingDetails] = useState(null);
@@ -14,13 +17,14 @@ const MatchScreen = () => {
   const [userId, setUserId] = useState(null);
   const [userDone, setUserDone] = useState(false);
   const [groupUsers, setGroupUsers] = useState([]);
-  const navigate = useNavigate();
 
+  // Load current user's ID
   useEffect(() => {
     const fetchedUserId = JSON.parse(localStorage.getItem("userId"))?.userId;
     setUserId(fetchedUserId);
   }, []);
 
+  // Poll backend for matching details every 3 seconds
   useEffect(() => {
     const fetchMatchingDetails = async () => {
       if (!userId) return;
@@ -29,6 +33,7 @@ const MatchScreen = () => {
         const res = await axios.get(`${BASE_URL}/api/dinner-plan/get-matching-details`, {
           params: { userId }
         });
+
         const details = res.data;
         setMatchingDetails(details);
 
@@ -50,11 +55,11 @@ const MatchScreen = () => {
     };
 
     const interval = setInterval(fetchMatchingDetails, 3000);
-    fetchMatchingDetails();
-
+    fetchMatchingDetails(); // Initial fetch
     return () => clearInterval(interval);
   }, [userId, navigate, BASE_URL]);
 
+  // Once matching details are available, fetch restaurant candidates
   useEffect(() => {
     if (matchingDetails) {
       const fetchRestaurants = async () => {
@@ -77,6 +82,7 @@ const MatchScreen = () => {
               matchType
             }
           });
+
           setRestaurants(res.data);
           setIsLoading(false);
         } catch (error) {
@@ -87,6 +93,7 @@ const MatchScreen = () => {
     }
   }, [matchingDetails, BASE_URL]);
 
+  // Handle user vote (yes/no)
   const handleVote = async (vote) => {
     if (!restaurants[currentIndex]) return;
 
@@ -94,6 +101,7 @@ const MatchScreen = () => {
     const voteValue = vote === "yes" ? 1 : 0;
 
     try {
+      // Submit vote
       await axios.patch(`${BASE_URL}/api/dinner-plan/update-vote`, {
         userId,
         restaurantId: currentRestaurant.id,
@@ -101,6 +109,7 @@ const MatchScreen = () => {
         restaurantDetails: currentRestaurant,
       });
 
+      // If last restaurant, mark user as done
       if (currentIndex + 1 >= restaurants.length) {
         try {
           await axios.patch(`${BASE_URL}/api/dinner-plan/mark-user-done`, { userId });
@@ -116,6 +125,7 @@ const MatchScreen = () => {
     }
   };
 
+  // Loading state while waiting for data
   if (isLoading || !matchingDetails) {
     return (
       <div className="waiting-screen">
@@ -125,6 +135,7 @@ const MatchScreen = () => {
     );
   }
 
+  // If user has voted on all restaurants, wait for others
   if (userDone) {
     return (
       <div className="waiting-screen">
@@ -136,6 +147,7 @@ const MatchScreen = () => {
 
   const imageUrl = restaurants[currentIndex]?.image;
 
+  // Main restaurant voting UI
   return (
     <div className="match-screen">
       {restaurants[currentIndex] ? (
@@ -144,6 +156,7 @@ const MatchScreen = () => {
 
           <img className="restaurant-image" src={imageUrl} alt="Restaurant" />
 
+          {/* Show menu button if available */}
           {restaurants[currentIndex].menu?.available && restaurants[currentIndex].menu?.url && (
             <a
               href={restaurants[currentIndex].menu.url}
@@ -155,12 +168,14 @@ const MatchScreen = () => {
             </a>
           )}
 
+          {/* Display basic restaurant info */}
           <div className="restaurant-info">
             <p><strong>Distance:</strong> {restaurants[currentIndex].distance || 'N/A'} miles</p>
             <p><strong>Rating:</strong> {restaurants[currentIndex].rating || 'N/A'}</p>
             <p><strong>Description:</strong> {restaurants[currentIndex].menu?.description || 'No description available.'}</p>
           </div>
 
+          {/* Voting buttons */}
           <div className="vote-buttons">
             <button onClick={() => handleVote("no")} className="vote-button vote-no">No</button>
             <button onClick={() => handleVote("yes")} className="vote-button vote-yes">Yes</button>

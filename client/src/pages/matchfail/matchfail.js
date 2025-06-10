@@ -1,13 +1,16 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
-import './matchfail.css'; // Import the styling
+import './matchfail.css'; // Styling for failed match screen
 
 const NoMatches = () => {
   const navigate = useNavigate();
   const BASE_URL = process.env.REACT_APP_API_BASE_URL;
+
+  // Get the current user's ID from localStorage
   const userId = JSON.parse(localStorage.getItem("userId"))?.userId;
 
+  // Delete the user's dinner plan from the backend
   const deleteDinnerPlan = async () => {
     try {
       await axios.delete(`${BASE_URL}/api/dinner-plan/delete/${userId}`);
@@ -16,11 +19,13 @@ const NoMatches = () => {
     }
   };
 
+  // Handle "Home" button click: delete plan, return to landing page
   const goHome = async () => {
     await deleteDinnerPlan();
     navigate('/');
   };
 
+  // Handle "Start new match" button click: delete plan, go to dinner plan form
   const tryAgain = async () => {
     await deleteDinnerPlan();
     navigate('/dinnerplan');

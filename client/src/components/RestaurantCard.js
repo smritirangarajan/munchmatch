@@ -1,5 +1,5 @@
 import React from 'react';
-import './RestaurantCard.css'; // Make sure this file exists
+import './RestaurantCard.css'; 
 
 const RestaurantCard = ({ restaurant }) => {
   const imageUrl = restaurant.image || restaurant.photo?.images?.original?.url;

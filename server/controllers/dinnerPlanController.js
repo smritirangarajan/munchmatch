@@ -1,24 +1,21 @@
+/**
+ * Dinner Plan Controller
+ * Handles creation, participation tracking, voting, and result calculation for restaurant matching.
+ */
+
 const DinnerPlan = require('../models/DinnerPlan');
 
+// Create a new dinner plan for a group of users
 const createDinnerPlan = async (req, res) => {
   const {
-    creator,
-    group,
-    budget,
-    diningStyle,
-    cuisines,
-    streetAddress,
-    city,
-    state,
-    zipCode,
-    radius,
-    matchType
+    creator, group, budget, diningStyle, cuisines,
+    streetAddress, city, state, zipCode, radius, matchType
   } = req.body;
 
   const allParticipants = [creator, ...group];
 
   try {
-    // ✅ Check if any user is already in a dinner plan
+    // Prevent users from joining multiple active plans
     const existingPlans = await DinnerPlan.find({
       $or: [
         { creator: { $in: allParticipants } },
@@ -32,22 +29,11 @@ const createDinnerPlan = async (req, res) => {
       });
     }
 
-    // ✅ Create and save the new dinner plan
+    // Save new dinner plan
     const newDinnerPlan = new DinnerPlan({
-      creator,
-      group,
-      budget,
-      diningStyle,
-      cuisines,
-      streetAddress,
-      city,
-      state,
-      zipCode,
-      radius,
-      matchType,
-      votes: [],
-      done: [],
-      matchedRestaurant: null
+      creator, group, budget, diningStyle, cuisines,
+      streetAddress, city, state, zipCode, radius, matchType,
+      votes: [], done: [], matchedRestaurant: null
     });
 
     await newDinnerPlan.save();
@@ -63,68 +49,43 @@ const createDinnerPlan = async (req, res) => {
   }
 };
 
-// ✅ NEW CONTROLLER
+// Fetch the active dinner plan for a user
 const getDinnerPlanForUser = async (req, res) => {
   try {
     const userId = req.query.userId;
 
     const plan = await DinnerPlan.findOne({
-      $or: [
-        { creator: userId },
-        { group: userId }
-      ]
+      $or: [{ creator: userId }, { group: userId }]
     });
 
-    if (plan) {
-      res.status(200).json(plan);
-    } else {
-      res.status(404).json(null); // No plan found
-    }
+    res.status(plan ? 200 : 404).json(plan || null);
   } catch (error) {
     console.error("Error fetching dinner plan for user:", error);
     res.status(500).json({ error: "Failed to fetch dinner plan." });
   }
 };
+
+// Return matching preferences + voting progress for a group
 const getMatchingDetails = async (req, res) => {
   try {
     const userId = req.query.userId;
+    if (!userId) return res.status(400).json({ error: "User ID is required" });
 
-    // If userId is not provided, send error response
-    if (!userId) {
-      return res.status(400).json({ error: "User ID is required" });
-    }
-
-    // Find the dinner plan where the user is either the creator or in the group
     const plan = await DinnerPlan.findOne({
-      $or: [
-        { creator: userId },  // Check if the user is the creator
-        { group: userId }      // Check if the user is in the group
-      ]
+      $or: [{ creator: userId }, { group: userId }]
     });
 
-    if (plan) {
-      // Return the dinner plan matching details along with creator, group, and done fields
-      const { creator, group, done, votes, createdAt, ...matchingDetails } = plan.toObject();
-    
-      // Add the creator, group, and done fields to the response
-      res.status(200).json({
-        matchingDetails,
-        creator,
-        group,
-        done,
-      });
-    
-    } else {
-      // If no plan is found, return a 404 with a message
-      res.status(404).json({ message: "No dinner plan found for this user." });
-    }
-    
+    if (!plan) return res.status(404).json({ message: "No dinner plan found for this user." });
+
+    const { creator, group, done, votes, createdAt, ...matchingDetails } = plan.toObject();
+
+    res.status(200).json({ matchingDetails, creator, group, done });
   } catch (error) {
-    // Handle server errors
     res.status(500).json({ error: "Failed to fetch matching details." });
   }
 };
 
+// Update vote for a restaurant by a user
 const updateVote = async (req, res) => {
   const { userId, restaurantId, voteValue, restaurantDetails } = req.body;
 
@@ -133,34 +94,25 @@ const updateVote = async (req, res) => {
       $or: [{ creator: userId }, { group: userId }]
     });
 
-    if (!plan) {
-      return res.status(404).json({ error: "Dinner plan not found" });
-    }
+    if (!plan) return res.status(404).json({ error: "Dinner plan not found" });
 
     let updated = false;
 
-    // Look for the restaurant and update the score if found
-    plan.votes = plan.votes.map(innerArr => {
-      return innerArr.map(restaurant => {
+    // Try updating score in existing votes
+    plan.votes = plan.votes.map(innerArr => 
+      innerArr.map(restaurant => {
         if (restaurant.id === restaurantId) {
           updated = true;
-          return {
-            ...restaurant,
-            score: (restaurant.score || 0) + voteValue
-          };
+          return { ...restaurant, score: (restaurant.score || 0) + voteValue };
         }
         return restaurant;
-      });
-    });
+      })
+    );
 
-    // If not found, add it in a new inner array
+    // If not found, add as new vote entry
     if (!updated) {
-      const newRestaurant = {
-        ...restaurantDetails,
-        id: restaurantId,
-        score: voteValue
-      };
-      plan.votes.push([newRestaurant]); // Push into a new inner array
+      const newRestaurant = { ...restaurantDetails, id: restaurantId, score: voteValue };
+      plan.votes.push([newRestaurant]);
     }
 
     await plan.save();
@@ -171,6 +123,7 @@ const updateVote = async (req, res) => {
   }
 };
 
+// Mark user as finished voting
 const markUserDone = async (req, res) => {
   const { userId } = req.body;
 
@@ -179,11 +132,8 @@ const markUserDone = async (req, res) => {
       $or: [{ creator: userId }, { group: userId }]
     });
 
-    if (!plan) {
-      return res.status(404).json({ error: "Dinner plan not found" });
-    } 
-    
-    // Only mark as done if not already done
+    if (!plan) return res.status(404).json({ error: "Dinner plan not found" });
+
     if (!plan.done.includes(userId)) {
       plan.done.push(userId);
       await plan.save();
@@ -191,70 +141,11 @@ const markUserDone = async (req, res) => {
 
     res.status(200).json({ message: "User marked as done" });
   } catch (error) {
-    console.error("Error marking user as done:", error);
     res.status(500).json({ error: "Failed to mark user as done" });
   }
 };
 
-
-const getDinnerPlanByUserId = async (req, res) => {
-  const userId = req.params.userId;
-
-  try {
-    const plan = await DinnerPlan.findOne({
-      $or: [{ creator: userId }, { group: userId }]
-    });
-
-    if (!plan) {
-      return res.status(404).json({ error: "Dinner plan not found" });
-    }
-
-    res.status(200).json(plan);
-  } catch (error) {
-    console.error("Error getting dinner plan:", error);
-    res.status(500).json({ error: "Failed to get dinner plan" });
-  }
-};
-
-const getDinnerPlanByUser = async (req, res) => {
-  const { userId } = req.params;
-
-  try {
-    const plan = await DinnerPlan.findOne({
-      $or: [{ creator: userId }, { group: userId }]
-    });
-
-    if (!plan) {
-      return res.status(404).json({ error: "Dinner plan not found" });
-    }
-
-    res.status(200).json(plan);
-  } catch (error) {
-    console.error("Error fetching dinner plan:", error);
-    res.status(500).json({ error: "Failed to fetch dinner plan" });
-  }
-};
-
-const deleteDinnerPlanByUser = async (req, res) => {
-  const { userId } = req.params;
-
-  try {
-    const deleted = await DinnerPlan.findOneAndDelete({
-      $or: [{ creator: userId }, { group: userId }]
-    });
-
-    if (!deleted) {
-      return res.status(404).json({ error: "Dinner plan not found" });
-    }
-
-    res.status(200).json({ message: "Dinner plan deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting dinner plan:", error);
-    res.status(500).json({ error: "Failed to delete dinner plan" });
-  }
-};
-
-// Determine the top restaurant after all users are done
+// Compute final match if all users are done
 const getMatchResult = async (req, res) => {
   const { userId } = req.params;
 
@@ -263,22 +154,19 @@ const getMatchResult = async (req, res) => {
       $or: [{ creator: userId }, { group: userId }]
     });
 
-    if (!plan) {
-      return res.status(404).json({ error: "Dinner plan not found" });
-    }
+    if (!plan) return res.status(404).json({ error: "Dinner plan not found" });
 
     const totalUsers = 1 + plan.group.length;
-
     if (plan.done.length < totalUsers) {
       return res.status(400).json({ error: "Not all users are done voting yet." });
     }
 
-    const flattenedVotes = plan.votes.flat(); // flatten the nested arrays
+    const flattenedVotes = plan.votes.flat();
     if (flattenedVotes.length === 0) {
       return res.status(404).json({ error: "No votes found" });
     }
 
-    // Find restaurant with highest score (min score of 2)
+    // Select restaurant with highest score (must meet minimum threshold)
     let topRestaurant = null;
     let maxScore = 0;
 
@@ -300,6 +188,27 @@ const getMatchResult = async (req, res) => {
   }
 };
 
+// Delete a user's dinner plan
+const deleteDinnerPlanByUser = async (req, res) => {
+  const { userId } = req.params;
+
+  try {
+    const deleted = await DinnerPlan.findOneAndDelete({
+      $or: [{ creator: userId }, { group: userId }]
+    });
+
+    if (!deleted) {
+      return res.status(404).json({ error: "Dinner plan not found" });
+    }
+
+    res.status(200).json({ message: "Dinner plan deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting dinner plan:", error);
+    res.status(500).json({ error: "Failed to delete dinner plan" });
+  }
+};
+
+// Save list of restaurant candidates
 const saveRestaurants = async (req, res) => {
   try {
     const { userId, restaurants } = req.body;
@@ -308,19 +217,14 @@ const saveRestaurants = async (req, res) => {
       return res.status(400).json({ error: "Invalid request data" });
     }
 
-    // Find the dinner plan that includes this user
     const dinnerPlan = await DinnerPlan.findOne({
-      $or: [
-        { "creator.userId": userId },
-        { "group.userId": userId }
-      ]
+      $or: [{ creator: userId }, { group: userId }]
     });
 
     if (!dinnerPlan) {
       return res.status(404).json({ error: "Dinner plan not found" });
     }
 
-    // Save restaurants in matchingDetails
     dinnerPlan.matchingDetails.restaurants = restaurants;
     await dinnerPlan.save();
 
@@ -331,16 +235,12 @@ const saveRestaurants = async (req, res) => {
   }
 };
 
-
-
 module.exports = {
   createDinnerPlan,
   getDinnerPlanForUser,
   getMatchingDetails,
   updateVote,
   markUserDone,
-  getDinnerPlanByUserId,
-  getDinnerPlanByUser,
   deleteDinnerPlanByUser,
   getMatchResult,
   saveRestaurants

@@ -8,6 +8,7 @@ const SignUpPage = () => {
   const navigate = useNavigate();
   const BASE_URL = process.env.REACT_APP_API_BASE_URL;
 
+  // Local form state for user input
   const [form, setForm] = useState({
     name: "",
     userId: "",
@@ -16,10 +17,12 @@ const SignUpPage = () => {
     dietaryRestrictions: [],
   });
 
+  // Handle input changes (text and checkbox)
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
 
     if (type === "checkbox") {
+      // Add or remove dietary restriction
       setForm((prev) => {
         const newRestrictions = checked
           ? [...prev.dietaryRestrictions, value]
@@ -27,24 +30,31 @@ const SignUpPage = () => {
         return { ...prev, dietaryRestrictions: newRestrictions };
       });
     } else {
+      // Update text field (name, username, password, etc.)
       setForm((prev) => ({ ...prev, [name]: value }));
     }
   };
 
+  // Submit signup form
   const handleSubmit = async (e) => {
     e.preventDefault();
+
+    // Check for password mismatch
     if (form.password !== form.confirmPassword) {
       alert("Passwords do not match!");
       return;
     }
 
     try {
+      // Send signup data to backend
       await axios.post(`${BASE_URL}/api/auth/signup`, {
         name: form.name,
         userId: form.userId,
         password: form.password,
         dietaryRestrictions: form.dietaryRestrictions,
       });
+
+      // Redirect to login page on success
       navigate("/login");
     } catch (err) {
       console.error(err);
@@ -55,8 +65,10 @@ const SignUpPage = () => {
   return (
     <div className="signup-container">
       <div className="signup-box">
+        {/* Sign-up form */}
         <form className="signup-form" onSubmit={handleSubmit}>
           <h2>Sign Up</h2>
+
           <input
             name="name"
             placeholder="Name"
@@ -64,6 +76,7 @@ const SignUpPage = () => {
             onChange={handleChange}
             required
           />
+
           <input
             name="userId"
             placeholder="Username"
@@ -71,6 +84,7 @@ const SignUpPage = () => {
             onChange={handleChange}
             required
           />
+
           <input
             name="password"
             type="password"
@@ -78,6 +92,7 @@ const SignUpPage = () => {
             onChange={handleChange}
             required
           />
+
           <input
             name="confirmPassword"
             type="password"
@@ -86,6 +101,7 @@ const SignUpPage = () => {
             required
           />
 
+          {/* Dietary restrictions */}
           <div className="checkbox-group">
             <label>
               <input type="checkbox" value="vegetarian" onChange={handleChange} />
@@ -101,12 +117,14 @@ const SignUpPage = () => {
             </label>
           </div>
 
+          {/* Submit and login redirect */}
           <button type="submit">Sign up</button>
           <a href="/login" className="login-link">
             Already have an account? Log in
           </a>
         </form>
 
+        {/* Right-side image */}
         <div className="signup-image">
           <img src={burgerImage} alt="Sign up graphic" />
         </div>

@@ -6,8 +6,6 @@ const {
   getMatchingDetails,
   updateVote,
   markUserDone,
-  getDinnerPlanByUserId,
-  getDinnerPlanByUser,
   deleteDinnerPlanByUser,
   getMatchResult,
   saveRestaurants
@@ -18,8 +16,6 @@ router.get("/user", getDinnerPlanForUser); // ✅ Add this
 router.get("/get-matching-details", getMatchingDetails); 
 router.patch("/update-vote", updateVote);
 router.patch("/mark-user-done", markUserDone);
-router.get("/get-by-user/:userId", getDinnerPlanByUserId);
-router.get("/user/:userId", getDinnerPlanByUser);
 router.delete("/delete/:userId", deleteDinnerPlanByUser);
 router.get("/match-result/:userId", getMatchResult);
 router.post("/save-restaurants", saveRestaurants);
